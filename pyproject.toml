@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "acapi"
+version = "0.1.1"
+description = "acapi Web API"
+authors = ["Evgeny Varnavskiy <varnavruz@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.92"
+uvicorn = "^0.20"
+gunicorn = "^20.1"
+python-multipart = "^0.0.5"
+aiofiles = "^22.1"
+SQLAlchemy = "^2.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
