@@ -4,12 +4,22 @@
 
 Returns data from [BaseStation.sqb](https://github.com/varnav/BaseStation.sqb).
 
-Query example: ``
+Query example: `http://127.0.0.1/api/v1/ac/getbyreg?reg=JA739J`
 
 Response:
 
 ```json
-
+[
+  {
+    "ModeS": "868078",
+    "Registration": "JA739J",
+    "ICAOTypeCode": "B77W",
+    "OperatorFlagCode": "JAL",
+    "Manufacturer": "BOEING",
+    "Type": "777 346ER",
+    "RegisteredOwners": "Japan Airlines"
+  }
+]
 ```
 
 ## Run app quickly
