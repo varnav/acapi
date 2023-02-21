@@ -1,8 +1,6 @@
-* [A+ rated] SSL configuration with TLS 1.3 and HTTP/2
-
 ## Aircraft Database API
 
-Returns data from [BaseStation.sqb](https://github.com/varnav/BaseStation.sqb).
+Returns aircraft data from [BaseStation.sqb](https://github.com/varnav/BaseStation.sqb)
 
 Query example: `http://127.0.0.1/api/v1/ac/getbyreg?reg=JA739J`
 
@@ -36,7 +34,7 @@ Open `http://localhost:8000/docs`
 
 ## Run app in production
 
-[Dockerfile](Dockerfile) will build necessary tools and run app behind nginx. You may use letsencrypt (default) or your own certs. You need to edit [nginx.conf](nginx.conf) for your own needs. Replace `changeme.com` with your domain name. Then you can build docker image and run it this way:
+[Dockerfile](Dockerfile) will build necessary tools and run app behind nginx. You may use letsencrypt, your own certs, or use without TLS (default). You need to edit [nginx.conf](nginx.conf) for your own needs. Replace `changeme.com` with your domain name. Then you can build docker image and run it this way:
 
 ```sh
 docker build -t mycoolcompany/acapi .
@@ -45,7 +43,7 @@ docker run -d --name acapi --restart on-failure:10 --security-opt no-new-privile
 
 ## How to get letsencrypt cert
 
-Run this on host VM:
+Run this on host machine:
 ```bash
 docker stop acapi
 certbot certonly --standalone -d yourdomain.com
