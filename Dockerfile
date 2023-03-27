@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y wget nginx soft
     ln -s /tmp/acapi_temp /html/getfile && \
     python -m pip install tailon pytest certbot certbot-nginx && \
     cd /app && \
-    wget https://github.com/varnav/BaseStation.sqb/releases/download/latest/BaseStation.sqb.tar.xz && \
+    wget -q https://github.com/varnav/BaseStation.sqb/releases/download/latest/BaseStation.sqb.tar.xz && \
     tar xf BaseStation.sqb.tar.xz && \
     rm -f BaseStation.sqb.tar.xz && \
     apt-get clean && \
