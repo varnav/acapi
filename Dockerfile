@@ -15,7 +15,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 #ENV ACCESS_LOG=/var/log/gunicorn/access.log
 #ENV ERROR_LOG=/var/log/gunicorn/error.log
 
-COPY ./pyproject.toml .
+WORKDIR app
+
+COPY ./app/pyproject.toml .
 
 RUN set -ex && \
     mkdir /html && \
@@ -30,7 +32,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y wget nginx soft
     chmod 777 /tmp/acapi_temp && \
     ln -s /tmp/acapi_temp /html/getfile && \
     python -m pip install tailon pytest certbot certbot-nginx && \
-    cd /app && \
     wget -q https://github.com/varnav/BaseStation.sqb/releases/download/latest/BaseStation.sqb.tar.xz && \
     tar xf BaseStation.sqb.tar.xz && \
     rm -f BaseStation.sqb.tar.xz && \
