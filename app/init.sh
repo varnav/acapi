@@ -4,4 +4,4 @@ curl -s -o BaseStation.sqb.tar.gz https://github.com/varnav/BaseStation.sqb/rele
 tar xf BaseStation.sqb.tar.gz
 rm -f BaseStation.sqb.tar.gz
 poetry install
-python -m pytest /app
+python -m pytest .
