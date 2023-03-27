@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: acapidev
+    env: python
+    branch: dev
+    rootDir: app
+    buildCommand: "sh init.sh"
+    startCommand: "uvicorn main:app --host 0.0.0.0"
+    healthCheckPath: /api/v1/version
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.10
