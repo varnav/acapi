@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker, Mapped, DeclarativeBase, mapped_column,
 
 DATABASE_URL = "sqlite:///./BaseStation.sqb"
 
-engine = create_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
