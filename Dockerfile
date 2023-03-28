@@ -30,7 +30,7 @@ RUN set -ex && \
     mkdir /var/log/gunicorn && \
     chmod 777 /tmp/acapi_temp && \
     ln -s /tmp/acapi_temp /html/getfile && \
-    python -m pip install --no-cache-dir tailon pytest certbot certbot-nginx && \
+    python -m pip install --no-cache-dir pytest certbot certbot-nginx && \
     wget -q https://github.com/varnav/BaseStation.sqb/releases/download/latest/BaseStation.sqb.tar.xz && \
     tar xf BaseStation.sqb.tar.xz && \
     rm -f BaseStation.sqb.tar.xz && \
