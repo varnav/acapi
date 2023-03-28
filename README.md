@@ -23,8 +23,8 @@ Response:
 ## Run app quickly
 
 ```sh
-poetry install
 cd app
+poetry install
 python -m uvicorn main:app --reload
 ```
 
