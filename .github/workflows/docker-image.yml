@@ -18,4 +18,8 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag varnav/acapi
     - name: Check image security with docker scout
-      run: docker scout cves --only-severity critical,high varnav/acapi
+      uses: docker/scout-action@v1
+      with:
+        command: cves
+        image: varnav/acapi
+        args: '--output image.sarif.json --format sarif --only-severity critical,high' 
