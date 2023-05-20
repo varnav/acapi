@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "acapi"
-version = "0.1.1"
+version = "0.2.1"
 description = "acapi Web API"
 authors = ["Evgeny Varnavskiy <varnavruz@gmail.com>"]
 license = "MIT"

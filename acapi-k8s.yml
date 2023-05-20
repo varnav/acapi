@@ -1,0 +1,69 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acapi
+  labels:
+    app: acapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: acapi
+  template:
+    metadata:
+      labels:
+        app: acapi
+    spec:
+      containers:
+      - name: acapi
+        image: varnav/acapi
+        ports:
+        - name: http
+          containerPort: 80
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "50m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acapi-service
+spec:
+  selector:
+    app.kubernetes.io/name: acapi
+  ports:
+    - protocol: TCP
+      port: 80
+
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: acapi-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: acapi
+  rules:
+  - http:
+      paths:
+      - path: /docs
+        pathType: Prefix
+        backend:
+          service:
+            name: acapi-service
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: acapi-service
+            port:
+              number: 80

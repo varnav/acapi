@@ -49,3 +49,7 @@ docker stop acapi
 certbot certonly --standalone -d yourdomain.com
 ``` 
 
+## Run app in Kubernetes
+
+1. Install [Nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/)
+2. kubectl apply -f .\acapi-k8s.yml
