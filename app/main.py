@@ -3,7 +3,7 @@ import logging
 from typing import List
 
 from fastapi import FastAPI, Depends, Response, HTTPException
-from pydantic import BaseModel
+from pydantic import ConfigDict, BaseModel
 from sqlalchemy import create_engine, String, select, func
 from sqlalchemy.orm import sessionmaker, Mapped, DeclarativeBase, mapped_column, Session
 
@@ -130,9 +130,7 @@ class Aircraft(BaseModel):
     Manufacturer: str
     Type: str
     RegisteredOwners: str
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 @app.get("/api/v1/version", response_model=Version, summary="Return version information")
