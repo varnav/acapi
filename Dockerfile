@@ -24,12 +24,12 @@ RUN set -ex && \
     poetry config virtualenvs.create false && \
     poetry install && \
     apt-get update && \
-    apt-get install --no-install-recommends -y wget nginx software-properties-common ca-certificates && \
+    apt-get install --no-install-recommends -y wget software-properties-common ca-certificates && \
     mkdir /tmp/acapi_temp && \
     mkdir /var/log/gunicorn && \
     chmod 777 /tmp/acapi_temp && \
     ln -s /tmp/acapi_temp /html/getfile && \
-    python -m pip install --no-cache-dir pytest certbot certbot-nginx && \
+    python -m pip install --no-cache-dir pytest && \
     wget -q https://github.com/varnav/BaseStation.sqb/releases/download/latest/BaseStation.sqb.tar.xz && \
     tar xf BaseStation.sqb.tar.xz && \
     rm -f BaseStation.sqb.tar.xz && \
@@ -37,7 +37,10 @@ RUN set -ex && \
     rm -rf /var/lib/apt/lists/*
 
 COPY ./html /html/
-COPY nginx-no-tls.conf /etc/nginx/nginx.conf
 COPY ./app/main.py ./app/prestart.sh ./app/test_main.py /app/
 
 EXPOSE 80
+
+WORKDIR /app
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]

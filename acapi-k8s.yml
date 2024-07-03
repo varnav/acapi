@@ -21,7 +21,7 @@ spec:
         image: varnav/acapi
         ports:
         - name: http
-          containerPort: 80
+          containerPort: 8000
         resources:
           limits:
             memory: "256Mi"
@@ -37,7 +37,7 @@ spec:
     app.kubernetes.io/name: acapi
   ports:
     - protocol: TCP
-      port: 80
+      port: 8000
 
 
 ---
@@ -59,7 +59,7 @@ spec:
           service:
             name: acapi-service
             port:
-              number: 80
+              number: 8000
       - path: /api
         pathType: Prefix
         backend:

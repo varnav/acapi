@@ -2,7 +2,7 @@
 
 Returns aircraft data from [BaseStation.sqb](https://github.com/varnav/BaseStation.sqb)
 
-Query example: `http://127.0.0.1/api/v1/ac/getbyreg?reg=JA739J`
+Query example: `http://127.0.0.1:8000/api/v1/ac/getbyreg?reg=JA739J`
 
 Response:
 
@@ -30,15 +30,13 @@ python -m uvicorn main:app --reload
 
 Open `http://localhost:8000/docs`
 
-
-
 ## Run app in production
 
-[Dockerfile](Dockerfile) will build necessary tools and run app behind nginx. You may use letsencrypt, your own certs, or use without TLS (default). You need to edit [nginx.conf](nginx.conf) for your own needs. Replace `changeme.com` with your domain name. Then you can build docker image and run it this way:
+[Dockerfile](Dockerfile) will build necessary tools and run app this way:
 
 ```sh
 docker build -t mycoolcompany/acapi .
-docker run -d --name acapi --restart on-failure:10 --security-opt no-new-privileges -p 80:80 -p 443:443 -v /etc/letsencrypt:/etc/letsencrypt mycoolcompany/acapi
+docker run -d --name acapi --restart on-failure:10 --security-opt no-new-privileges -p 8000:8000
 ```
 
 ## How to get letsencrypt cert
