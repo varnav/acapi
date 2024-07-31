@@ -36,16 +36,8 @@ Open `http://localhost:8000/docs`
 
 ```sh
 docker build -t mycoolcompany/acapi .
-docker run -d --name acapi --restart on-failure:10 --security-opt no-new-privileges -p 8000:8000
+docker run -d --name acapi --restart on-failure:10 --security-opt no-new-privileges -p 8000:8000 mycoolcompany/acapi
 ```
-
-## How to get letsencrypt cert
-
-Run this on host machine:
-```bash
-docker stop acapi
-certbot certonly --standalone -d yourdomain.com
-``` 
 
 ## Run app in Kubernetes
 
