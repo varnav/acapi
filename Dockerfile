@@ -1,4 +1,4 @@
-FROM python:3.12
+FROM python:3.13
 
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.description="acapi Web API"
@@ -39,7 +39,7 @@ RUN set -ex && \
 COPY ./html /html/
 COPY ./app/main.py ./app/prestart.sh ./app/test_main.py /app/
 
-EXPOSE 80
+EXPOSE 8000
 
 WORKDIR /app
 

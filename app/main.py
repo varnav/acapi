@@ -21,7 +21,7 @@ def get_db():
         db.close()
 
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 app = FastAPI(title="acapi", version=__version__, openapi_url="/api/v1/openapi.json")
 
