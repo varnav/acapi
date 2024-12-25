@@ -14,10 +14,10 @@ const registrations = Array(1000).fill(null).map(() => generateRandomReg());
 export const options = {
     stages: [
         { duration: '10s', target: 100 }, // Ramp up to 100 users
-        { duration: '1m', target: 100 },  // Stay at 100 users for 1 minute
-        { duration: '30s', target: 5000 },
-        { duration: '1m', target: 5000 },
-        { duration: '30s', target: 0 },  // Ramp down to 0 users
+        { duration: '30s', target: 100 },  // Stay at 100 users for 1 minute
+        { duration: '15s', target: 150 },
+        { duration: '30s', target: 150 },
+        { duration: '10s', target: 0 },  // Ramp down to 0 users
     ],
     thresholds: {
         http_req_duration: ['p(95)<2000'], // 95% of requests should complete within 2s

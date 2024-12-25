@@ -9,8 +9,7 @@ from sqlalchemy.orm import sessionmaker, Mapped, DeclarativeBase, mapped_column,
 
 DATABASE_URL = "sqlite:///./BaseStation.sqb"
 
-# Since DB is read-only, we can use StaticPool - single connection between all threads
-engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True,poolclass=StaticPool)
+engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -140,7 +139,7 @@ def version():
 
 
 @app.get("/api/v1/ac/getbyreg", response_model=List[Aircraft], summary="Return aircraft data")
-def get_ac_by_reg(reg: str, response: Response, db: Session = Depends(get_db)):
+async def get_ac_by_reg(reg: str, response: Response, db: Session = Depends(get_db)):
     response.headers["Cache-Control"] = "public, max-age=300, immutable, stale-if-error=1800"
     qr = db.execute(select(AircraftDB).where(AircraftDB.Registration == reg.upper())).scalars().all()
     if len(qr) > 0:
