@@ -4,12 +4,13 @@ from typing import List
 
 from fastapi import FastAPI, Depends, Response, HTTPException
 from pydantic import ConfigDict, BaseModel
-from sqlalchemy import create_engine, String, select, func
+from sqlalchemy import create_engine, String, select, func, StaticPool
 from sqlalchemy.orm import sessionmaker, Mapped, DeclarativeBase, mapped_column, Session
 
 DATABASE_URL = "sqlite:///./BaseStation.sqb"
 
-engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True, connect_args={"check_same_thread": False})
+# Since DB is read-only, we can use StaticPool - single connection between all threads
+engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True,poolclass=StaticPool)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -145,7 +146,7 @@ def get_ac_by_reg(reg: str, response: Response, db: Session = Depends(get_db)):
     if len(qr) > 0:
         return qr
     else:
-        raise HTTPException(status_code=500, detail="Not found")
+        raise HTTPException(status_code=404, detail="Not found")
 
 
 @app.get("/api/v1/ac/dbinfo", response_model=DBInfo, summary="Return database information")
