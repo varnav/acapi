@@ -24,11 +24,11 @@ Response:
 
 ```sh
 cd app
-poetry install
-python -m uvicorn main:app --reload
+pip install --upgrade -r requirements.txt
+litestar run -d --reload
 ```
 
-Open `http://localhost:8000/docs`
+Open `http://localhost:8000/schema`
 
 ## Run app in production
 
@@ -50,4 +50,4 @@ docker run -it --rm -p 8000:8000 mycoolcompany/acapi
 
 `kubectl apply -f .\acapi-k8s.yml`
 
-This will deploy 2 instances of backend and 1 instance of varnish cache on port 30080
+This will deploy 4 instances of backend and 1 instance of varnish cache on port `30080`
