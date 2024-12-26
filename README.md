@@ -2,7 +2,7 @@
 
 Returns aircraft data from [BaseStation.sqb](https://github.com/varnav/BaseStation.sqb)
 
-Query example: `http://127.0.0.1:8000/api/v1/ac/getbyreg?reg=JA739J`
+Query example: `http://127.0.0.1:8000/api/v1/ac/reg/JA739J`
 
 Response:
 

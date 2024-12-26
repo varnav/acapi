@@ -1,5 +1,1 @@
-fastapi~=0.115
-pydantic~=2.10
-requests~=2.32
-SQLAlchemy~=2.0
-httpx~=0.28
+litestar[standard,sqlalchemy]~=2.4

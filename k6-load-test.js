@@ -17,8 +17,8 @@ export const options = {
     stages: [
         { duration: '10s', target: 100 }, // Ramp up to 100 users
         { duration: '30s', target: 100 },  // Stay at 100 users for 1 minute
-        { duration: '15s', target: 150 },
-        { duration: '30s', target: 150 },
+        { duration: '15s', target: 5000 },
+        { duration: '30s', target: 5000 },
         { duration: '10s', target: 0 },  // Ramp down to 0 users
     ],
     thresholds: {
@@ -32,7 +32,7 @@ export default function () {
     const reg = registrations[Math.floor(Math.random() * registrations.length)];
     
     // Make the request
-    const res = http.get(`http://127.0.0.1:30080/api/v1/ac/getbyreg?reg=${reg}`);
+    const res = http.get(`http://127.0.0.1:30080/api/v1/ac/reg/${reg}`);
     
     // Check if the response was successful
     check(res, {
