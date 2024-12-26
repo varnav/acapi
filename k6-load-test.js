@@ -2,6 +2,8 @@ import { check } from 'k6';
 import http from 'k6/http';
 import { sleep } from 'k6';
 
+http.setResponseCallback(http.expectedStatuses(200, 404));
+
 // Function to generate random N-number
 function generateRandomReg() {
     const num = Math.floor(Math.random() * 99999);
@@ -30,13 +32,11 @@ export default function () {
     const reg = registrations[Math.floor(Math.random() * registrations.length)];
     
     // Make the request
-    const res = http.get(`http://127.0.0.1:8000/api/v1/ac/getbyreg?reg=${reg}`);
+    const res = http.get(`http://127.0.0.1:30080/api/v1/ac/getbyreg?reg=${reg}`);
     
     // Check if the response was successful
     check(res, {
-        'is status 200': (r) => r.status === 200,
-        'is status 404': (r) => r.status === 404,
-        'response time < 2s': (r) => r.timings.duration < 2000,
+        'response time < 2s': (r) => r.timings.duration < 2000
     });
     
     // Wait between 1-5 seconds before next request

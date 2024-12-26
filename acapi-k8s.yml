@@ -1,12 +1,9 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: acapi-deployment
-  labels:
-    app: acapi
+  name: acapi
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: acapi
@@ -18,51 +15,65 @@ spec:
       containers:
       - name: acapi
         image: varnav/acapi
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
         resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
           limits:
-            cpu: "500m"
             memory: "256Mi"
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /api/v1/ac/dbinfo
+            port: 8000
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: acapi-service
+  name: acapi-backend
 spec:
   selector:
     app: acapi
   ports:
-  - protocol: TCP
-    port: 80
+  - port: 8000
     targetPort: 8000
-  type: ClusterIP
-
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: ingress-acapi
+  name: varnish
 spec:
-  rules:
-  - host: kubernetes.docker.internal
-    http:
-      paths:
-      - path: /docs
-        pathType: Prefix
-        backend:
-          service:
-            name: acapi-service
-            port:
-              number: 80
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: acapi-service
-            port:
-              number: 80
-  ingressClassName: nginx
+  replicas: 1    # Single Varnish instance
+  selector:
+    matchLabels:
+      app: varnish
+  template:
+    metadata:
+      labels:
+        app: varnish
+    spec:
+      containers:
+      - name: varnish
+        image: varnish:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: VARNISH_SIZE
+          value: "256M"
+        - name: VARNISH_BACKEND_HOST
+          value: "acapi-backend"  # Points to the ACAPI service
+        - name: VARNISH_BACKEND_PORT
+          value: "8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: varnish-service
+spec:
+  type: NodePort
+  selector:
+    app: varnish
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080

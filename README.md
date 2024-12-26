@@ -48,5 +48,6 @@ docker run -it --rm -p 8000:8000 mycoolcompany/acapi
 
 ## Run app in Kubernetes
 
-1. Install [Nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/)
-2. kubectl apply -f .\acapi-k8s.yml
+`kubectl apply -f .\acapi-k8s.yml`
+
+This will deploy 2 instances of backend and 1 instance of varnish cache on port 30080
