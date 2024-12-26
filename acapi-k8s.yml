@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acapi
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: acapi
+  template:
+    metadata:
+      labels:
+        app: acapi
+    spec:
+      containers:
+      - name: acapi
+        image: varnav/acapi
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /api/v1/ac/dbinfo
+            port: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acapi-backend
+spec:
+  selector:
+    app: acapi
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: varnish
+spec:
+  replicas: 1    # Single Varnish instance
+  selector:
+    matchLabels:
+      app: varnish
+  template:
+    metadata:
+      labels:
+        app: varnish
+    spec:
+      containers:
+      - name: varnish
+        image: varnish:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: VARNISH_SIZE
+          value: "256M"
+        - name: VARNISH_BACKEND_HOST
+          value: "acapi-backend"  # Points to the ACAPI service
+        - name: VARNISH_BACKEND_PORT
+          value: "8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: varnish-service
+spec:
+  type: NodePort
+  selector:
+    app: varnish
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080

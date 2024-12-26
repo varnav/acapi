@@ -1,5 +1,4 @@
-# Docs https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
+FROM python:3.12
 
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.description="acapi Web API"
@@ -16,29 +15,27 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
-COPY ./app/pyproject.toml .
+COPY ./app/requirements.txt .
 
 RUN set -ex && \
     mkdir /html && \
     python -m pip install --no-cache-dir -U pip && \
-    python -m pip install --no-cache-dir poetry && \
-    poetry config virtualenvs.create false && \
-    poetry install && \
+    pip install --no-cache-dir --upgrade -r requirements.txt && \
     apt-get update && \
-    apt-get install --no-install-recommends -y wget nginx software-properties-common ca-certificates && \
-    mkdir /tmp/acapi_temp && \
-    mkdir /var/log/gunicorn && \
-    chmod 777 /tmp/acapi_temp && \
-    ln -s /tmp/acapi_temp /html/getfile && \
-    python -m pip install --no-cache-dir pytest certbot certbot-nginx && \
+    apt-get install --no-install-recommends -y sqlite3 wget software-properties-common ca-certificates && \
+    python -m pip install --no-cache-dir pytest && \
     wget -q https://github.com/varnav/BaseStation.sqb/releases/download/latest/BaseStation.sqb.tar.xz && \
     tar xf BaseStation.sqb.tar.xz && \
     rm -f BaseStation.sqb.tar.xz && \
+    sqlite3 BaseStation.sqb "CREATE INDEX IF NOT EXISTS ix_aircraft_registration ON Aircraft(Registration);" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 COPY ./html /html/
-COPY nginx-no-tls.conf /etc/nginx/nginx.conf
-COPY ./app/main.py ./app/prestart.sh ./app/test_main.py /app/
+COPY ./app/app.py ./app/prestart.sh ./app/test_main.py /app/
 
-EXPOSE 80
+EXPOSE 8000
+
+WORKDIR /app
+
+CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "8000"]
