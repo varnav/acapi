@@ -1,11 +1,13 @@
-from typing import Optional
-from litestar import Litestar, get
+from typing import Optional, Any
+from functools import lru_cache
+from pydantic import BaseModel, constr
+from litestar import Litestar, get, Response
 from litestar.response import Response
-from sqlalchemy import create_engine, select, func
-from sqlalchemy.orm import Session, DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import select, func
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
-# Database Model
 class Base(DeclarativeBase):
     pass
 
@@ -22,45 +24,55 @@ class Aircraft(Base):
     RegisteredOwners: Mapped[Optional[str]]
 
 
-# Database connection
-DATABASE_URL = "sqlite:///./BaseStation.sqb"
-engine = create_engine(DATABASE_URL)
+class AircraftResponse(BaseModel):
+    ModeS: str
+    Registration: constr(pattern="^[A-Z0-9-]+$")
+    ICAOTypeCode: Optional[str]
+    OperatorFlagCode: Optional[str]
+    Manufacturer: Optional[str]
+    Type: Optional[str]
+    RegisteredOwners: Optional[str]
+
+
+DATABASE_URL = "sqlite+aiosqlite:///./BaseStation.sqb"
+engine = create_async_engine(DATABASE_URL)
+session = AsyncSession(engine)
+
 
 @get("/api/v1/ac/dbinfo")
 async def get_db_info() -> dict:
-    with Session(engine) as session:
-        row_count = session.execute(select(func.count()).select_from(Aircraft)).scalar()
-        return {
-            "rowcount": row_count
-        }
+    result = await session.execute(select(func.count()).select_from(Aircraft))
+    row_count = result.scalar()
+    return {
+        "rowcount": row_count
+    }
 
 
 @get("/api/v1/ac/reg/{registration:str}")
-async def get_aircraft(registration: str) -> dict:
+async def get_aircraft(registration: str) -> Response[dict[str, str]] | Response[dict[str, Any]]:
     """Look up aircraft by registration number."""
-    with Session(engine) as session:
-        stmt = select(Aircraft).where(Aircraft.Registration == registration.upper())
-        result = session.execute(stmt).scalar_one_or_none()
+    stmt = select(Aircraft).where(Aircraft.Registration == registration.upper())
+    result = await session.execute(stmt)
+    aircraft = result.scalar_one_or_none()
 
-        if not result:
-            return Response(
-                status_code=404,
-                content={"error": f"No aircraft found with registration {registration}"}
-            )
-
+    if not aircraft:
         return Response(
-            content={
-                "ModeS": result.ModeS,
-                "Registration": result.Registration,
-                "ICAOTypeCode": result.ICAOTypeCode,
-                "OperatorFlagCode": result.OperatorFlagCode,
-                "Manufacturer": result.Manufacturer,
-                "Type": result.Type,
-                "RegisteredOwners": result.RegisteredOwners
-            },
-            headers={"Cache-Control" : "public, max-age=300, immutable, stale-if-error=1800"}
+            status_code=404,
+            content={"error": f"No aircraft found with registration {registration}"}
         )
 
+    return Response(
+        content=AircraftResponse(
+            ModeS=aircraft.ModeS,
+            Registration=aircraft.Registration,
+            ICAOTypeCode=aircraft.ICAOTypeCode,
+            OperatorFlagCode=aircraft.OperatorFlagCode,
+            Manufacturer=aircraft.Manufacturer,
+            Type=aircraft.Type,
+            RegisteredOwners=aircraft.RegisteredOwners
+        ).dict(),
+        headers={"Cache-Control": "public, max-age=300, immutable, stale-if-error=1800"}
+    )
 
-# Create the Litestar application
+
 app = Litestar([get_aircraft, get_db_info])

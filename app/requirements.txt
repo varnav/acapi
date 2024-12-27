@@ -1,1 +1,3 @@
 litestar[standard,sqlalchemy]~=2.4
+aiosqlite
+pydantic
