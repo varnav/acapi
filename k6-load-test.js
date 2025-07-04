@@ -17,13 +17,13 @@ export const options = {
     stages: [
         { duration: '10s', target: 100 }, // Ramp up to 100 users
         { duration: '30s', target: 100 },  // Stay at 100 users for 1 minute
-        { duration: '15s', target: 5000 },
-        { duration: '30s', target: 5000 },
+        { duration: '15s', target: 400 },
+        { duration: '30s', target: 400 },
         { duration: '10s', target: 0 },  // Ramp down to 0 users
     ],
     thresholds: {
         http_req_duration: ['p(95)<2000'], // 95% of requests should complete within 2s
-        http_req_failed: ['rate<0.1'],     // Less than 10% of requests should fail
+        http_req_failed: ['rate<0.01'],     // Less than 1% of requests should fail
     },
 };
 
@@ -32,7 +32,7 @@ export default function () {
     const reg = registrations[Math.floor(Math.random() * registrations.length)];
     
     // Make the request
-    const res = http.get(`http://127.0.0.1:30080/api/v1/ac/reg/${reg}`);
+    const res = http.get(`http://127.0.0.1:8000/api/v1/ac/reg/${reg}`);
     
     // Check if the response was successful
     check(res, {
